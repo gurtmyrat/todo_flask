@@ -1,1 +1,4 @@
 .idea
+.env
+.flaskenv
+api/__init__.py

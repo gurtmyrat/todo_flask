@@ -7,6 +7,9 @@ authors = ["Gurtmyrat <gurtmot@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.10"
 Flask = "^3.0.3"
+SQLAlchemy = "^2.0.34"
+psycopg2-binary = "^2.9.9"
+
 
 [tool.poetry.dev-dependencies]
 

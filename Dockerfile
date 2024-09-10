@@ -1,17 +1,21 @@
+# Используем базовый образ Python
 FROM python:3.12-slim
-
-RUN pip install poetry
-
-ENV POETRY_VIRTUALENVS_CREATE=false
-ENV FLASK_APP=api.app
 
 WORKDIR /api
 
 COPY pyproject.toml poetry.lock /api/
 
+# Устанавливаем Poetry
+RUN pip install poetry
+
+# Устанавливаем зависимости с Poetry
 RUN poetry install --no-dev
 
+# Копируем исходный код в контейнер
 COPY api /api
+
+# Устанавливаем переменную окружения FLASK_APP
+ENV FLASK_APP=app
 
 EXPOSE 5001
 
