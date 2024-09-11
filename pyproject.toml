@@ -9,6 +9,8 @@ python = "^3.10"
 Flask = "^3.0.3"
 SQLAlchemy = "^2.0.34"
 psycopg2-binary = "^2.9.9"
+pydantic-settings = "^2.5.1"
+alembic = "^1.13.2"
 
 
 [tool.poetry.dev-dependencies]

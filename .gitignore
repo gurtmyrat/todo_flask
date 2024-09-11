@@ -1,4 +1,8 @@
 .idea
 .env
+.db.env
 .flaskenv
-api/__init__.py
+api/__pycache__
+api/models/__pycache__
+alembic/versions/__pycache__
+alembic/__pycache__

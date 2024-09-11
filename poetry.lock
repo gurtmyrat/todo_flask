@@ -1,4 +1,28 @@
 [[package]]
+name = "alembic"
+version = "1.13.2"
+description = "A database migration tool for SQLAlchemy."
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+Mako = "*"
+SQLAlchemy = ">=1.3.0"
+typing-extensions = ">=4"
+
+[package.extras]
+tz = ["backports.zoneinfo"]
+
+[[package]]
+name = "annotated-types"
+version = "0.7.0"
+description = "Reusable constraint types to use with typing.Annotated"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[[package]]
 name = "blinker"
 version = "1.8.2"
 description = "Fast, simple object-to-object and broadcast signaling"
@@ -79,6 +103,22 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
+name = "mako"
+version = "1.3.5"
+description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+MarkupSafe = ">=0.9.2"
+
+[package.extras]
+testing = ["pytest"]
+babel = ["babel"]
+lingua = ["lingua"]
+
+[[package]]
 name = "markupsafe"
 version = "2.1.5"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -93,6 +133,65 @@ description = "psycopg2 - Python-PostgreSQL Database Adapter"
 category = "main"
 optional = false
 python-versions = ">=3.7"
+
+[[package]]
+name = "pydantic"
+version = "2.9.1"
+description = "Data validation using Python type hints"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+annotated-types = ">=0.6.0"
+pydantic-core = "2.23.3"
+typing-extensions = [
+    {version = ">=4.12.2", markers = "python_version >= \"3.13\""},
+    {version = ">=4.6.1", markers = "python_version < \"3.13\""},
+]
+
+[package.extras]
+email = ["email-validator (>=2.0.0)"]
+timezone = ["tzdata"]
+
+[[package]]
+name = "pydantic-core"
+version = "2.23.3"
+description = "Core functionality for Pydantic validation and serialization"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
+
+[[package]]
+name = "pydantic-settings"
+version = "2.5.1"
+description = "Settings management using Pydantic"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+pydantic = ">=2.7.0"
+python-dotenv = ">=0.21.0"
+
+[package.extras]
+azure-key-vault = ["azure-identity (>=1.16.0)", "azure-keyvault-secrets (>=4.8.0)"]
+toml = ["tomli (>=2.0.1)"]
+yaml = ["pyyaml (>=6.0.1)"]
+
+[[package]]
+name = "python-dotenv"
+version = "1.0.1"
+description = "Read key-value pairs from a .env file and set them as environment variables"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.extras]
+cli = ["click (>=5.0)"]
 
 [[package]]
 name = "sqlalchemy"
@@ -156,9 +255,11 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "cd88e3839f5f2af2330ddb5ca6459667135c68645b8acbc6c73814e7105cec5d"
+content-hash = "df395aab63c430e2c0ba38b7e7324e340f43e88b7f147f0faaf6f5b1beb091e2"
 
 [metadata.files]
+alembic = []
+annotated-types = []
 blinker = []
 click = []
 colorama = []
@@ -166,8 +267,13 @@ flask = []
 greenlet = []
 itsdangerous = []
 jinja2 = []
+mako = []
 markupsafe = []
 psycopg2-binary = []
+pydantic = []
+pydantic-core = []
+pydantic-settings = []
+python-dotenv = []
 sqlalchemy = []
 typing-extensions = []
 werkzeug = []
