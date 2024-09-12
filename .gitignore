@@ -6,3 +6,5 @@ api/__pycache__
 api/models/__pycache__
 alembic/versions/__pycache__
 alembic/__pycache__
+api/schemas/__pycache__
+api/views/__pycache__
