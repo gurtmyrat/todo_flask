@@ -15,7 +15,12 @@ class User(Base):
 
     tasks = relationship('Task', backref='user', cascade='all, delete-orphan')
 
-    def set_password(self, password):
+    @property
+    def password(self):
+        raise AttributeError("Password is not a readable attribute.")
+
+    @password.setter
+    def password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
