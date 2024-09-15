@@ -8,26 +8,56 @@ from api.schemas.task import TaskOutSchema, TaskInSchema, TaskStatusEnum
 
 tasks_bp = Blueprint("tasks", __name__)
 
+def paginate(query, page, per_page):
+    total_items = query.count()
+    items = query.offset((page - 1) * per_page).limit(per_page).all()
+    return total_items, items
+
+
 @tasks_bp.route("/tasks/all", methods=["GET"])
 def get_all_tasks():
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+
+    if page < 1 or per_page < 1:
+        return jsonify({"error": "Invalid pagination parameters"}), 400
+
     session = get_session()
-    with session.begin():
-        tasks = session.query(Task).all()
+    tasks_query = session.query(Task)
+
+    total_tasks, tasks = paginate(tasks_query, page, per_page)
 
     tasks_out = [TaskOutSchema.model_validate(task) for task in tasks]
-    return jsonify([task.model_dump(mode="json") for task in tasks_out]), 200
+    return jsonify({
+        "tasks": [task.model_dump(mode="json") for task in tasks_out],
+        "page": page,
+        "per_page": per_page,
+        "total_tasks": total_tasks
+    }), 200
+
 
 @tasks_bp.route("/tasks", methods=["GET"])
 @jwt_required()
 def get_user_tasks():
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+
+    if page < 1 or per_page < 1:
+        return jsonify({"error": "Invalid pagination parameters"}), 400
+
     session = get_session()
     current_user_id = get_jwt_identity()
+    tasks_query = session.query(Task).filter_by(user_id=current_user_id)
 
-    with session.begin():
-        tasks = session.query(Task).filter_by(user_id=current_user_id).all()
+    total_tasks, tasks = paginate(tasks_query, page, per_page)
 
     tasks_out = [TaskOutSchema.model_validate(task) for task in tasks]
-    return jsonify([task.model_dump(mode="json") for task in tasks_out]), 200
+    return jsonify({
+        "tasks": [task.model_dump(mode="json") for task in tasks_out],
+        "page": page,
+        "per_page": per_page,
+        "total_tasks": total_tasks
+    }), 200
 
 
 @tasks_bp.route("/tasks/<int:task_id>", methods=["GET"])
