@@ -4,7 +4,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from pydantic import ValidationError
 from api.models.base import get_session
 from api.models.task import Task
-from api.schemas.task import TaskOutSchema, TaskInSchema
+from api.schemas.task import TaskOutSchema, TaskInSchema, TaskStatusEnum
 
 tasks_bp = Blueprint("tasks", __name__)
 
@@ -128,5 +128,40 @@ def delete_task(task_id):
         session.commit()
     return jsonify({"message": "Task deleted successfully"}), 200
 
+@tasks_bp.route('/tasks/<int:task_id>/complete', methods=["PUT"])
+@jwt_required()
+def mark_task_as_completed(task_id):
+    session = get_session()
+    task = session.query(Task).get(task_id)
 
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+
+    current_user_id = get_jwt_identity()
+
+    if task.user_id != current_user_id:
+        return jsonify({"error": "Access denied"}), 403
+
+    task.status = TaskStatusEnum.COMPLETED
+    session.commit()
+
+    task_out = TaskOutSchema.model_validate(task)
+    return jsonify(task_out.model_dump(mode="json")), 200
+
+@tasks_bp.route('/tasks/status/<status>', methods=["GET"])
+@jwt_required()
+def get_tasks_by_status(status):
+    session = get_session()
+    current_user_id = get_jwt_identity()
+
+    try:
+        task_status = TaskStatusEnum(status)
+    except ValueError:
+        return jsonify({"error": "Invalid status"}), 400
+
+    with session.begin():
+        tasks = session.query(Task).filter_by(user_id=current_user_id, status=task_status).all()
+
+    tasks_out = [TaskOutSchema.model_validate(task) for task in tasks]
+    return jsonify([task.model_dump(mode="json") for task in tasks_out]), 200
 
