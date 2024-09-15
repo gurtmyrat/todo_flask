@@ -1,22 +1,11 @@
-from pydantic_settings import BaseSettings
+import os
+from dotenv import load_dotenv
+from datetime import timedelta
 
-class Settings(BaseSettings):
-    MODE: str
-    POSTGRES_HOST: str
-    POSTGRES_PORT: int
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
-    SECRET_KEY: str
+load_dotenv()
 
-    @property
-    def DATABASE_URL(self):
-        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
-
-    class Config:
-        env_file = ".db.env"
-
-settings = Settings()
-
-#print("DATABASE_URL:", settings.DATABASE_URL)
-#print("SECRET_KEY:", settings.SECRET_KEY)
+class Config:
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)

@@ -11,6 +11,9 @@ SQLAlchemy = "^2.0.34"
 psycopg2-binary = "^2.9.9"
 pydantic-settings = "^2.5.1"
 alembic = "^1.13.2"
+email-validator = "^2.2.0"
+flask-jwt-extended = "^4.6.0"
+pyjwt = "^2.9.0"
 
 
 [tool.poetry.dev-dependencies]
