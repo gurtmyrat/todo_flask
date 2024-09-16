@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DATABASE_URL = 'postgresql://postpost:anderson@db:5432/test_db'
+DATABASE_URL = 'postgresql://postpost:anderson@localhost:5432/test_db'
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

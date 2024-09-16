@@ -13,6 +13,6 @@ class Task(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
     description = Column(Text, nullable=True)
-    status = Column(Enum(TaskStatusEnum), nullable=False, default=TaskStatusEnum.NEW)
+    status = Column(Enum(TaskStatusEnum, name='taskstatus'), nullable=False, default=TaskStatusEnum.NEW)
 
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))

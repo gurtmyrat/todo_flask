@@ -1,11 +1,3 @@
-"""Add task status enum
-
-Revision ID: 089699014cd4
-Revises: c2c8ed2655ff
-Create Date: 2024-09-15 01:10:50.595678
-
-"""
-from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 import enum
@@ -16,11 +8,11 @@ class TaskStatusEnum(enum.Enum):
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
 
-# revision identifiers, used by Alembic.
-revision: str = '089699014cd4'
-down_revision: Union[str, None] = 'c2c8ed2655ff'
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+# Revision identifiers, used by Alembic.
+revision = '089699014cd4'
+down_revision = 'c2c8ed2655ff'
+branch_labels = None
+depends_on = None
 
 def upgrade() -> None:
     # Create Enum type in PostgreSQL if it doesn't exist
@@ -32,11 +24,7 @@ def upgrade() -> None:
         ALTER TABLE tasks 
         ALTER COLUMN status 
         TYPE taskstatus 
-        USING CASE 
-            WHEN status = 'New' THEN 'NEW'::taskstatus
-            WHEN status = 'In Progress' THEN 'IN_PROGRESS'::taskstatus
-            WHEN status = 'Completed' THEN 'COMPLETED'::taskstatus
-        END
+        USING status::taskstatus
     """)
 
 def downgrade() -> None:
