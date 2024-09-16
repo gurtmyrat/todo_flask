@@ -1,10 +1,10 @@
 .idea
 .env
-.db.env
-.flaskenv
 api/__pycache__
 api/models/__pycache__
 alembic/versions/__pycache__
 alembic/__pycache__
 api/schemas/__pycache__
 api/views/__pycache__
+tests/__pycache__
+tests/api/__pycache__

@@ -1,44 +1,97 @@
+import uuid
 import pytest
-from flask_jwt_extended import create_access_token
-from api import create_app
-from api.models.base import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import os
+from api.app import create_app
+from api.models import Base, User
+from flask_jwt_extended import create_access_token
 
-TEST_DATABASE_URL = os.getenv('DATABASE_URL')
-
-@pytest.fixture(scope="session", autouse=True)
-def app_dict():
-    print(TEST_DATABASE_URL)
+@pytest.fixture(scope='session')
+def app():
     app = create_app()
-    app.config.update({
-        "TESTING": True,
-        "SQLALCHEMY_DATABASE_URI": TEST_DATABASE_URL,
-        "SQLALCHEMY_TRACK_MODIFICATIONS": False
-    })
+    return app
 
-    engine = create_engine(TEST_DATABASE_URL)
+@pytest.fixture(scope='session')
+def engine(app):
+    return create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+
+@pytest.fixture(scope='session')
+def connection(engine):
+    connection = engine.connect()
+    yield connection
+    connection.close()
+
+@pytest.fixture(scope='session')
+def setup_db(connection):
+    Base.metadata.create_all(connection)
+    yield
+    Base.metadata.drop_all(connection)
+
+@pytest.fixture
+def jwt_token(db_session):
+    user = User(
+        first_name='Test',
+        last_name='User',
+        username='testuser',
+        email='testuser@example.com',
+        password='password123'
+    )
+    db_session.add(user)
+    db_session.commit()
+    return create_access_token(identity=user.id)
+
+@pytest.fixture(scope='function')
+def db_session():
+    app = create_app()
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
     Session = sessionmaker(bind=engine)
-
-    with app.app_context():
-        Base.metadata.create_all(engine)
-
-        yield {"app": app, "db_session": Session()}
-
-        Base.metadata.drop_all(engine)
+    session = Session()
+    yield session
+    session.close()
 
 @pytest.fixture
-def client(app_dict):
-    app = app_dict['app']
-    db_session = app_dict['db_session']
-    client = app.test_client()
+def setup_test_user(db_session):
+    unique_id = str(uuid.uuid4())
+    user = User(
+        first_name='John',
+        last_name='Doe',
+        username=f'johndoe_{unique_id}',
+        email=f'johndoe_{unique_id}@example.com',
+        password='password123'
+    )
+    user.password = "password123"
+    db_session.add(user)
+    db_session.commit()
+    yield user
+    db_session.query(User).filter_by(username=f'johndoe_{unique_id}').delete()
+    db_session.commit()
 
-    yield client
-
-    db_session.rollback()
 
 @pytest.fixture
-def auth_header(client):
-    access_token = create_access_token(identity=1)
-    return {'Authorization': f'Bearer {access_token}'}
+def setup_test_users(db_session):
+    user1 = User(
+        first_name="John10",
+        last_name="Doe10",
+        username="johndoe10",
+        email="john10@example.com",
+        password="password123"
+    )
+    user2 = User(
+        first_name="Jane",
+        last_name="Doe",
+        username="janedoe",
+        email="jane@example.com",
+        password="password123"
+    )
+    user1.password = "password123"
+    user2.password = "password123"
+
+    db_session.add(user1)
+    db_session.add(user2)
+    db_session.commit()
+
+    yield user1, user2
+
+    db_session.delete(user1)
+    db_session.delete(user2)
+    db_session.commit()
