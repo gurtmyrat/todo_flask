@@ -1,22 +1,24 @@
 import os
 from flask import Flask
 from flask_jwt_extended import JWTManager
-from .config import Config
 from api.views.user import users_bp
 from api.views.task import tasks_bp
-from dotenv import load_dotenv
+from .config import DevelopmentConfig, TestingConfig
 
-load_dotenv()
+def create_app(config_class=None):
+    if not config_class:
+        flask_env = os.getenv("FLASK_ENV", "testing")
+        if flask_env == 'testing':
+            config_class = TestingConfig
+        else:
+            config_class = DevelopmentConfig
 
-def create_app():
     app = Flask(__name__)
+    app.config.from_object(config_class)
 
-    app.config.from_object(Config)
     jwt = JWTManager(app)
-    app.register_blueprint(users_bp)
-    app.register_blueprint(tasks_bp)
+
+    app.register_blueprint(users_bp, url_prefix='/api')
+    app.register_blueprint(tasks_bp, url_prefix='/api')
 
     return app
-
-
-app = create_app()
