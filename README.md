@@ -17,10 +17,10 @@ This project is a task management API built with Flask, SQLAlchemy, and PostgreS
 
 1. [Installation Instructions](#installation-instructions)
 2. [Configuration](#configuration)
-3. [API Documentation](#api-documentation)
-4. [Running Tests](#running-tests)
-5. [Contributing](#contributing)
-6. [License](#license)
+3. [Database Migrations](#database-migrations)
+4. [API Documentation](#api-documentation)
+5. [Running Tests](#running-tests)
+6. [Contributing](#contributing)
 
 ## Installation Instructions
 
@@ -55,21 +55,24 @@ This project is a task management API built with Flask, SQLAlchemy, and PostgreS
     Create a `.env` file in the root directory with the following content:
 
     ```env
-    PGADMIN_DEFAULT_EMAIL=admin@gmail.com
-    PGADMIN_DEFAULT_PASSWORD=password
+    PGADMIN_DEFAULT_EMAIL=example@gmail.com
+    PGADMIN_DEFAULT_PASSWORD=example
     FLASK_APP=api.app
     FLASK_ENV=development
     FLASK_DEBUG=1
 
-    SECRET_KEY=secretkey
-    JWT_SECRET_KEY=myjwttoken
+    SECRET_KEY=example
+    JWT_SECRET_KEY=example
 
-    DATABASE_URL=postgresql://user:password@db:5432/development_db
+    DATABASE_URL=postgresql://example:example@localhost:5432/example_db
 
-    POSTGRES_USER=user
-    POSTGRES_PASSWORD=password
-    POSTGRES_DB=postgresdb
+    POSTGRES_USER=example
+    POSTGRES_PASSWORD=example
+    POSTGRES_DB=example_db
     POSTGRES_PORT=5432
+
+    # Test Environment
+    TEST_DATABASE_URL=postgresql://example:example@localhost:5432/test_db
     ```
 
 5. **Build and start Docker containers:**
@@ -80,8 +83,10 @@ This project is a task management API built with Flask, SQLAlchemy, and PostgreS
 
 6. **Run database migrations:**
 
+    Alembic is used for managing database migrations. Run the following command to apply migrations:
+
     ```bash
-    docker-compose exec web flask db upgrade
+    docker-compose exec web alembic upgrade head
     ```
 
 7. **Access the application:**
@@ -101,6 +106,40 @@ The Flask application configuration is managed through `config.py`, and environm
 - `SECRET_KEY`: Used for session management and security.
 - `JWT_SECRET_KEY`: Key for encoding JWT tokens.
 - `JWT_ACCESS_TOKEN_EXPIRES` and `JWT_REFRESH_TOKEN_EXPIRES`: Expiry times for JWT tokens.
+
+## Database Migrations
+
+Alembic is used for managing database migrations. Here’s how to handle migrations:
+
+1. **Generate a New Migration:**
+
+    ```bash
+    docker-compose exec web alembic revision -m "Describe your migration"
+    ```
+
+2. **Apply Migrations:**
+
+    ```bash
+    docker-compose exec web alembic upgrade head
+    ```
+
+3. **Downgrade Migrations:**
+
+    ```bash
+    docker-compose exec web alembic downgrade -1
+    ```
+
+4. **Check Migration Status:**
+
+    ```bash
+    docker-compose exec web alembic current
+    ```
+
+5. **Initialize the Database (First Time Setup):**
+
+    ```bash
+    docker-compose exec web alembic upgrade head
+    ```
 
 ## API Documentation
 
@@ -269,7 +308,7 @@ The Flask application configuration is managed through `config.py`, and environm
 - **Method:** `PUT`
 - **Description:** Mark a task as completed.
 
-- **Response:** Same as `Update Task`, with status set to "Completed".
+- **Response:** Same as `Update Task`, with status set to "COMPLETED".
 
 #### Get Tasks by Status
 
@@ -300,4 +339,5 @@ The Flask application configuration is managed through `config.py`, and environm
 3. Commit your changes (`git commit -am 'Add new feature'`).
 4. Push to the branch (`git push origin feature/your-feature`).
 5. Create a new Pull Request.
+
 
