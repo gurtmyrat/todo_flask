@@ -7,7 +7,7 @@ from .config import DevelopmentConfig, TestingConfig
 
 def create_app(config_class=None):
     if not config_class:
-        flask_env = os.getenv("FLASK_ENV", "testing")
+        flask_env = os.getenv("FLASK_ENV", "development")
         if flask_env == 'testing':
             config_class = TestingConfig
         else:

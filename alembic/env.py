@@ -9,10 +9,10 @@ from api.config import DevelopmentConfig, TestingConfig
 load_dotenv()
 
 # Determine the environment
-flask_env = os.getenv("FLASK_ENV", "testing")
+flask_env = os.getenv("FLASK_ENV", "development")
 
 # Choose the correct configuration based on the environment
-if flask_env == "testing":
+if flask_env == "development":
     config_class = TestingConfig
 else:
     config_class = DevelopmentConfig

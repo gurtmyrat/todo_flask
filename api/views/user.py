@@ -82,8 +82,7 @@ def delete_user(user_id: int):
     session = get_session()
     current_user_id = get_jwt_identity()
 
-    # Update this line to use session.get
-    user = session.get(User, user_id)  # Updated to Session.get()
+    user = session.get(User, user_id)
 
     if not user:
         return jsonify({"error": "User not found"}), 404
@@ -91,8 +90,7 @@ def delete_user(user_id: int):
     if user.id != current_user_id:
         return jsonify({"error": "Unauthorized to delete this user"}), 403
 
-    with session.begin_nested():
-        session.delete(user)
-        session.commit()
+    session.delete(user)
+    session.commit()
 
     return jsonify({"message": "User deleted successfully"}), 200
